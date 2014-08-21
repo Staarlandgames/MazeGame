@@ -1,0 +1,12 @@
+*.vcxproj
+*.tlog
+*.filters
+*.opensdf
+*.sdf
+*.sdf
+*.suo
+ProceduralMazeGame.sdf
+*.tlog
+*.pdb
+*.exe
+*.ilk
