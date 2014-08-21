@@ -3,36 +3,32 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "label.h"
-
 //object class definition
-//defines teh class, and it's functions
+//defines the class, and it's functions
 class object: public sf::Sprite
 {
-public:	
+public://public functions	
 	
-	object::object(int id,sf::Texture &newTexture, sf::Vector2f newPosition,sf::Font &newFont, std::string newString);
+	object::object(int id,sf::Texture &newTexture, sf::Vector2f newPosition);
 	
-	//set functons
-	void setColor(sf::Color newColor);//set the color of the object
-	void setActive(bool input);//set wether the object is active
-	void setLabel(std::string newString);
-
-	//get funsions
+	//set functions
+	inline void setColor(sf::Color newColor = sf::Color::White){defaultColor = newColor;}//set the color of the object
+	inline void setActive(bool input = true){isActive = input;}//set wether the object is active
+	
+	//get functions
 	inline int getIDNumber(){return idNumber;}//return the id number
 	
 	//Game Functions
-	bool onClick(sf::Vector2f hitPosition);//check to see if th eobject is pressed
+	//virtual bool onHit() = 0;//react to collision with object
 
-public:
+public://public variables
 	
-private:
+private://private functions
 
-private:
+private://private variables
 
-	bool isActive; // boolean to determine wether the object is active or not
-	sf::Color defaultColor; // the default colour of the object
-	sf::Color inactiveColor; // the inactive colour of the object
+	bool isActive; // boolean to determine weather the object is active or not
+	sf::Color defaultColor; // the default color of the object
 	int idNumber;//id number for the object
 };
 
