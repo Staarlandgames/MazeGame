@@ -27,7 +27,7 @@ Scene::Scene()
 //creates the window and resets the scene
 void Scene::initilaiseScene(){
 	//create and initilaise the renderWindow
-	window.create(VideoMode(MaxScreenWidth,MaxScreenHeight),"STaarlandGames Presents: PCGMazeGam");
+	window.create(VideoMode(MaxScreenWidth,MaxScreenHeight),"Hastag Connect Your Friends");
 	//set verticle sync to be enabled, for frame rate
 	window.setVerticalSyncEnabled(true);
 	
@@ -67,13 +67,15 @@ void Scene::run(){
 void Scene::loadAssets(){
 
 	//load font file
-	if(!font.loadFromFile("Assets/Fonts/Biko_Regular.otf"))
+	if(!font.loadFromFile("Assets/Fonts/kenvector_future_thin.ttf"))
 	{
 		//could not load font file
 		cleanup();
 	}
 	
 	//load textures
+
+
 
 }//end of load seets function
 
@@ -86,16 +88,15 @@ void Scene::drawHUD()
 	string titleText;
 	tTitle.setFont(font);
 	tTitle.setCharacterSize(40);
-	tTitle.setColor(Color::Blue);
-	//set the title text foir the titile screen
-	titleText = "STaarland Present's: Small World Race Selection!";
+	tTitle.setColor(Color::Black);
+	//set the title text for the title screen
+	titleText = "Hastag Invert!";
 	tTitle.setString(titleText);
 	tTitle.setPosition((MaxScreenWidth/2)-tTitle.getLocalBounds().width/2,0.0f);
 	window.draw(tTitle);
-
-
-
+	
 }//end of drawHUD function
+
 //start of windowEvents function
 void Scene::windowEvents(){
 
@@ -112,6 +113,12 @@ void Scene::windowEvents(){
 			if(event.type==Event::MouseButtonPressed)
 			{
 				mouseInput(Mouse::getPosition(window));
+			}
+
+			if(event.type==Event::KeyPressed)
+			{
+
+
 			}
 
 		}//end of while window.pollEvent loop
@@ -147,8 +154,7 @@ void Scene::resetScene(){
 	
 	//Setup Objects
 	state = Title;
-
-	//clear the vectrors so any pre exisitig data is cleared out
+	//clear the vectors so any pre-existing data is cleared out
 
 }
 

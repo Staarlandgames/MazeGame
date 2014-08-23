@@ -4,9 +4,15 @@
 #include <SFML/System/Vector2.hpp>
 
 object::object(int id,sf::Texture &newTexture, sf::Vector2f newPosition):
+	Sprite(newTexture),
 	idNumber(id)
 {
-	setTexture(newTexture);
 	setPosition(newPosition);
+	
+}
+
+void object::update(float deltaTime)
+{
+
 }
 

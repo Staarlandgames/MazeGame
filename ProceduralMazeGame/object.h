@@ -20,6 +20,7 @@ public://public functions
 	
 	//Game Functions
 	//virtual bool onHit() = 0;//react to collision with object
+	virtual void update(float deltaTime);
 
 public://public variables
 	

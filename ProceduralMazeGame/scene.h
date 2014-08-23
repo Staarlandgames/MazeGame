@@ -40,7 +40,7 @@ private:
 	void resetScene();//reset all things in the scene
 	
 	//setup game objects
-
+	void generateMap();
 	
 	//Gameplay Functions
 	void mouseInput(sf::Vector2i mousePosition);//check if the mouse button has hit any active objects
@@ -48,12 +48,36 @@ private:
 //private variables
 private:
 
-	//Declerations of Variables
+	//Decelerations of Variables
 	State state;
 	sf::RenderWindow window;
 	sf::Font font;
 	//file IO objects
 	std::vector<std::string*> vectorStrings;
+	// Textures
+	sf::Vector2<sf::Texture> textures;
+	
+	//id's for textures
+	int brickWall;
+	int grassWall;
+	int magicWall;
+	int mudWall;
+	int sandWall;
+	int snowWall;
+	int stoneWall;
+
+	int liquidLava;
+	int liquidWater;
+
+	int blueLock;
+	int greenLock;
+	int redLock;
+	int yellowLock;
+
+	int blueKey;
+	int greenKey;
+	int redKey;
+	int yellowKey;
 
 };
 

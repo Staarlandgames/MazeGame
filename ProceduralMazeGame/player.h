@@ -13,26 +13,49 @@ class player: public object
 {
 
 public://public functions
-	//function that inverts the direction of the player object
-	void invertDirection();
+	
+	//constructor
+	player::player(int id,sf::Texture &newTexture, sf::Vector2f newPosition, direction dir, sf::Vector2i UVPosition, sf::Vector2i dimensions);
+	// deconstructor
+	player::~player();
+
+	
 	//function to set the direction of the player object
 	inline void setDirection(direction input){ currentDirection = input;}
 	//function to check the direction of the player
 	inline direction getDirection(){return currentDirection;}
-	//function to move the player, specifiying the new position to set the player too 
-	bool move(sf::Vector2f newPosition);
+	//function to set the veloicty of the player
+	inline void setVelocity(float input){velocity = input;}
+	//set wether the player should be mooving
+	inline void setMoving(bool input){isMoving = true;}
+	//set the goal position, and set the previous position
+	inline void setGoalPosiiton(sf::Vector2f input) {goalPosition = input;previousPosition = getPosition();}
+	
+	//function that inverts the direction of the player object
+	void invertDirection();
 	//snap posiiton of the player so it is the same as the tile it is colliding with
-	void snapPosition(object snapPosition);
-
+	void snapPosition(sf::Vector2f input);
+	//set goal function sets the goal for the current move position
+	void setGoal(object nextTile);
+	//update game object
+	void update(float deltaTime);
 
 public://public variables
 
-private://private functions
+private://private functions	
+	
+	//function to move the player, specifying the new position to set the player too 
+	bool move(sf::Vector2f newPosition, float deltaTime);
+	void animateWalk(float deltaTime);
+
 
 private://private variables
-	sf::Vector2f velocity;
-	direction currentDirection;
-	sf::Vector2f previousPosition;
+	
+	float velocity;//players movement velocity
+	bool isMoving;
+	direction currentDirection; // the current direction of the player
+	sf::Vector2f previousPosition; // the stored previous position of the player
+	sf::Vector2f goalPosition; // the stored goal position of the player
 };
 
 #endif
