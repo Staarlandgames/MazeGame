@@ -22,6 +22,10 @@ const int MaxScreenHeight = 576;
 const int mazeWidth = 30;
 const int mazeHeight = 15;
 
+const int noEnemies = 5;
+
+const int noLocks = 2;
+
 const float scale = 0.5;
 class Scene
 {
@@ -40,10 +44,13 @@ private:
 	void loadAssets(); // load the font file, and texture files
 	void drawHUD(); //draw labels to the screen
 	void windowEvents();//function to handle window events
-	void update();//the game update function
+	void update(sf::Time deltaTime);//the game update function
 	void render();//render in game objects 
 	void resetScene();//reset all things in the scene
-	
+
+	void GenerateTiles();
+
+
 	//setup game objects
 	void generateMap();
 	
@@ -68,14 +75,20 @@ private:
 	//players
 	player* Player1;
 	player* Player2;
+	sf::Vector2i Player1Pos;
+	sf::Vector2i Player2Pos;
 	
 	//tiles
-	std::vector<tile*> blocks;
-	std::vector<tile*> liquidBlocks;
-	std::vector<tile*> foliageBlocks;
+	tile* backgroundTile;
+	std::vector<object*> blocks;
+	
 	// Textures
 	std::vector<sf::Texture*> textures;
-	
+
+	//numbers for textures
+	int brickMainID;
+	int backgroundID;
+
 	//id's for textures
 	int brickWall;
 	int grassWall;
@@ -104,6 +117,7 @@ private:
 	int bluePlayer;
 	int pinkPlayer;
 
+	int terrain1;
 };
 
  

@@ -15,7 +15,8 @@ using namespace std;
 //scene constructor
 Scene::Scene():
 	Player1(NULL),
-	Player2(NULL)
+	Player2(NULL),
+	backgroundTile(NULL)
 {
 	//load in all the assets needed for the game, specifically textures and font
 	loadAssets();
@@ -50,51 +51,14 @@ void Scene::cleanup(){
 	Player1 = NULL;
 	Player2 = NULL;
 
-	//clear blocks
-	std::vector<tile*>::iterator itTiles;
-	if(blocks.size()>0)
-	{
-		for (itTiles = blocks.begin(); itTiles!= blocks.end();++itTiles)
-		{
-			//itTiles = blocks.erase(itTiles);
-	
-		}
-	}
-	blocks.clear();
-	//clear keys
-	
-	//clear locks
+	//clear the background tile
+	delete backgroundTile;
+	backgroundTile = NULL;
 
-	//clear liquids
-	if(liquidBlocks.size()>0)
-	{
-		for (itTiles = liquidBlocks.begin(); itTiles!= liquidBlocks.end();++itTiles)
-		{
-			//itTiles = liquidBlocks.erase(itTiles);
-			
-		}
-	}
-	liquidBlocks.clear();
-	
-	//clear foliage
-	if(foliageBlocks.size()>0){
-		for (itTiles = foliageBlocks.begin(); itTiles!= foliageBlocks.end();++itTiles)
-		{
-			//itTiles = foliageBlocks.erase(itTiles);
-			
-		}
-	}
-	foliageBlocks.clear();
-	
-	//clear textures
-	std::vector<sf::Texture*>::iterator itTextures;
-	if(textures.size()>0){
-		for (itTextures = textures.begin(); itTextures!= textures.end();++itTextures)
-		{
-			//itTextures =textures.erase(itTextures);
-			//delete *itTextures;
-		}
-	}
+	//clear blocks vector
+	blocks.clear();
+
+	//clear textures vector
 	textures.clear();
 
 	//close the window, thus ending the game
@@ -102,14 +66,17 @@ void Scene::cleanup(){
 }
 void Scene::run(){
 
+	sf::Clock deltaClock;
+
 	//if the window is open, the game should be running
 	while(window.isOpen())//GameLoop
 	{
+		sf::Time deltaTime = deltaClock.restart();
 		//window events
 		windowEvents();
 		
 		//update function
-		update();
+		update(deltaTime);
 
 		//window rendering
 		render();
@@ -202,37 +169,34 @@ void Scene::loadAssets(){
 	tempTexture = new sf::Texture();
 	if(tempTexture->loadFromFile("assets/Sprites/Players/p2_walk.png"))
 		textures.push_back(tempTexture);
+	
 	pinkPlayer = bluePlayer+1;
 	tempTexture = new sf::Texture();
 	if(tempTexture->loadFromFile("assets/Sprites/Players/p3_walk.png"))
 		textures.push_back(tempTexture);
+	
 	greenPlayer = pinkPlayer+1;
 	tempTexture = new sf::Texture();
 	if(tempTexture->loadFromFile("assets/Sprites/Players/p1_walk.png"))
 		textures.push_back(tempTexture);
+
+	//load backgrounds
+	terrain1 = greenPlayer+1;
+	tempTexture = new sf::Texture();
+	if(tempTexture->loadFromFile("assets/Sprites/Backgrounds/terrainTile1.png"))
+		textures.push_back(tempTexture);
+	
+	tempTexture = new sf::Texture();
+	if(tempTexture->loadFromFile("assets/Sprites/Backgrounds/terrainTile1.png"))
+		textures.push_back(tempTexture);
+
+	
 	//remove temp texture;
 	delete tempTexture;
 	tempTexture = NULL;
 
 }//end of load seets function
 
-//draw HUD function
-//render GUI text and objects
-void Scene::drawHUD()
-{	
-	//create title text object to be used for in game text
-	Text tTitle;
-	string titleText;
-	tTitle.setFont(font);
-	tTitle.setCharacterSize(40);
-	tTitle.setColor(Color::Black);
-	//set the title text for the title screen
-	titleText = "#Invert!";
-	tTitle.setString(titleText);
-	tTitle.setPosition((MaxScreenWidth/2)-tTitle.getLocalBounds().width/2,0.0f);
-	window.draw(tTitle);
-	
-}//end of drawHUD function
 
 //start of windowEvents function
 void Scene::windowEvents(){
@@ -254,10 +218,6 @@ void Scene::windowEvents(){
 
 		if(event.type==Event::KeyPressed)
 		{
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-			{
-				resetScene();
-			}
 			keyboardInput();
 		}
 
@@ -266,10 +226,14 @@ void Scene::windowEvents(){
 } //end of windowEvents function
 
 //update function
-void Scene::update()
+void Scene::update(sf::Time dT)
 {
+	float deltaTime = dT.asSeconds();
 	//update on screen information
-
+	if(Player1!=NULL)
+		Player1->update(deltaTime);
+	if(Player2!=NULL)
+		Player2->update(deltaTime);
 
 }//end of update function
 
@@ -282,15 +246,21 @@ void Scene::render()
 	window.clear(Color::White);
 	
 	//Draw Assets
-	std::vector<tile*>::iterator itTiles;
+	//draw the background 
+	if(backgroundTile!=NULL)
+		window.draw(*backgroundTile);
+	std::vector<object*>::iterator itTiles;
+
 	if(blocks.size()>0)
 	{
 		for (itTiles = blocks.begin(); itTiles!= blocks.end();++itTiles)
 		{
-			window.draw(**itTiles);
+			if(*itTiles!=NULL)
+				window.draw(**itTiles);
 			
 		}
 	}
+
 	
 	drawHUD();
 	//display window
@@ -298,57 +268,48 @@ void Scene::render()
 
 }//end of windowRender function
 
+//draw HUD function
+//render GUI text and objects
+void Scene::drawHUD()
+{	
+	//create title text object to be used for in game text
+	Text tTitle;
+	string titleText;
+	tTitle.setFont(font);
+	tTitle.setCharacterSize(40);
+	
+	if (Player1!=NULL&&Player1->getDirection()==horizontal)
+		tTitle.setColor(Color::Black);
+	else
+		tTitle.setColor(Color::White);
+	//set the title text for the title screen
+	titleText = "#Invert!";
+	tTitle.setString(titleText);
+	tTitle.setPosition((MaxScreenWidth/2)-tTitle.getLocalBounds().width/2,0.0f);
+	window.draw(tTitle);
+
+}//end of drawHUD function
+
+
 void Scene::resetScene()
 {
-	//Setup Objects
+	//Set gamestate
 	state = Title;
 	
-	//numbers for textures
-	int liquidID;
-	int brickMainID;
-	int brickSubID;
-
-	//select liquid and blocks
-	int liquidRan = rand()%100;
-
-	if(liquidRan >50)
-		liquidID = liquidLava;
-	else
-		liquidID = liquidWater;
-
-	int brickMainRan = rand()%100;
+	//generate Tiles
+	GenerateTiles();
+	//select background	
+	backgroundID = terrain1;
 	
-	if(brickMainRan >50)
-		brickMainID = brickWall;
-	else
-		brickMainID = castleWall;
-
-	int brickSubRan = rand()%100;
-	if(brickMainID==brickWall)
-	{
-		if(brickSubRan <=30)
-			brickSubID = dirtWall;
-		else if (brickSubRan>30 && brickSubRan<=60)
-			brickSubID = sandWall;
-		else
-			brickSubID = grassWall;
-	}
-	else
-	{
-		if(brickSubRan <=30)
-			brickSubID = stoneWall;
-		else if (brickSubRan>30 && brickSubRan<=60)
-			brickSubID = mudWall;
-		else
-			brickSubID = snowWall;
-	}
-
-	brickSubID = grassWall;
+	//clear the vectors so any pre-existing data is cleared out
 	blocks.clear();
-	//liquidBlocks.clear();
-	//foliageBlocks.clear();
-	//textures.clear();
 	
+	//foliageBlocks.clear();
+	
+	int randBackground = rand()%3;
+
+	backgroundTile = new tile(0,*textures.at(backgroundID),sf::Vector2f(0,0),sf::Vector2i(64*randBackground,0),sf::Vector2i(64,64));
+	backgroundTile->setScale(MaxScreenWidth,MaxScreenHeight);
 	//clear the map
 	for (int i = 0; i<mazeWidth;i++)
 	{
@@ -372,10 +333,7 @@ void Scene::resetScene()
 			{
 			case 0:
 				{
-					newTile = new tile((i+j),(*textures.at(liquidID)),sf::Vector2f(i*(70*scale),j*(70*scale)),sf::Vector2i(0,0),sf::Vector2i(70,105));
-					newTile->scale(scale,scale);
-					blocks.push_back(newTile);
-
+					
 					break;
 				}
 			case 1:
@@ -383,28 +341,34 @@ void Scene::resetScene()
 					newTile = new tile((i+j),(*textures.at(brickMainID)),sf::Vector2f(i*(70*scale),j*(70*scale)),sf::Vector2i(0,0),sf::Vector2i(70,105));
 					newTile->scale(scale,scale);
 					blocks.push_back(newTile);
+					//map[i][j] = 0;
+					
 					break;
 				}
 			case 2:
 				{
-					newTile = new tile((i+j),(*textures.at(brickSubID)),sf::Vector2f(i*(70*scale),j*(70*scale)),sf::Vector2i(0,0),sf::Vector2i(70,105));
-					newTile->scale(scale,scale);
-					newTile->setColor(sf::Color::Magenta);
-					blocks.push_back(newTile);
+					Player1 = new player(1,(*textures.at(greenPlayer)),sf::Vector2f(i*(70*scale),j*(70*scale)),horizontal,sf::Vector2i(0,0),sf::Vector2i(64,90));
+					Player1->scale(scale,scale);
+					Player1->setStartPosiiton(sf::Vector2f(i*(70*scale),j*(70*scale)));
+					Player1->setMapCoordinates(sf::Vector2i(i,j));
+					Player1->setDirection(horizontal);
+					blocks.push_back(Player1);
 					break;
 				}
 			case 3:
 				{
-					newTile = new tile((i+j),(*textures.at(brickSubID)),sf::Vector2f(i*(70*scale),j*(70*scale)),sf::Vector2i(0,0),sf::Vector2i(70,105));
-					newTile->scale(scale,scale);
-					newTile->setColor(sf::Color::Magenta);
-					blocks.push_back(newTile);
+					Player2 = new player(2,(*textures.at(pinkPlayer)),sf::Vector2f(i*(70*scale),j*(70*scale)),vertical,sf::Vector2i(0,0),sf::Vector2i(64,90));
+					Player2->scale(scale,scale);
+					Player2->setStartPosiiton(sf::Vector2f(i*(70*scale),j*(70*scale)));
+					Player2->setMapCoordinates(sf::Vector2i(i,j));
+					Player2->setDirection(vertical);
+					blocks.push_back(Player2);
 					break;
 				}
 			default:
 				{
 					
-
+					break;
 				}
 				
 			}
@@ -412,9 +376,6 @@ void Scene::resetScene()
 	}
 	
 
-
-	//Player1 = new player()
-	//clear the vectors so any pre-existing data is cleared out
 
 
 }
@@ -427,7 +388,189 @@ void Scene::mouseInput(Vector2i mousePosition)
 
 void Scene::keyboardInput()
 {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+	{
+		resetScene();
+	}
+	//Horizontal Controls
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A))||(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)))
+	{
+		if (Player1->getDirection()==horizontal&&!Player1->getMoving())//the player is not currently moving and the direction is correct
+		{
+			if(Player1->getMapCoordinates().x-1>0)
+			{	
+				int newX = Player1->getMapCoordinates().x-1;
+				int newY = Player1->getMapCoordinates().y;
+				
+				int mapCoordinate = map[newX][newY];
 
+				//check if next tile is valid
+				if(mapCoordinate!=1&&mapCoordinate!=4&&mapCoordinate!=6)
+				{
+					//set the player so they move to the next tile
+					Player1->setMoving(true);
+					Player1->setMapCoordinates(sf::Vector2i(newX,newY));
+					Player1->setGoalPosition(sf::Vector2f(newX*(70*scale), newY*(70*scale)));
+				}
+			}
+		}
+
+		if (Player2->getDirection()==horizontal&&!Player2->getMoving())//the player is not currently moving and the direction is correct
+		{
+			if(Player2->getMapCoordinates().x-1>0)
+			{	
+				int newX = Player2->getMapCoordinates().x-1;
+				int newY = Player2->getMapCoordinates().y;
+
+				int mapCoordinate = map[newX][newY];
+
+				//check if next tile is valid
+				if(mapCoordinate!=1&&mapCoordinate!=4&&mapCoordinate!=6)
+				{
+					//set the player so they move to the next tile
+					Player2->setMoving(true);
+					Player2->setMapCoordinates(sf::Vector2i(newX,newY));
+					Player2->setGoalPosition(sf::Vector2f(newX*(70*scale), newY*(70*scale)));
+				}
+			}
+		}
+	}//end of if Left
+
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D))||(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)))
+	{
+		if (Player1->getDirection()==horizontal&&!Player1->getMoving())//the player is not currently moving and the direction is correct
+		{
+			if(Player1->getMapCoordinates().x+1<mazeWidth-1)
+			{	
+				int newX = Player1->getMapCoordinates().x+1;
+				int newY = Player1->getMapCoordinates().y;
+
+				int mapCoordinate = map[newX][newY];
+
+				//check if next tile is valid
+				if(mapCoordinate!=1&&mapCoordinate!=4&&mapCoordinate!=6)
+				{
+					//set the player so they move to the next tile
+					Player1->setMoving(true);
+					Player1->setMapCoordinates(sf::Vector2i(newX,newY));
+					Player1->setGoalPosition(sf::Vector2f(newX*(70*scale), newY*(70*scale)));
+				}
+			}
+		}
+
+		if (Player2->getDirection()==horizontal&&!Player2->getMoving())//the player is not currently moving and the direction is correct
+		{
+			if(Player2->getMapCoordinates().x+1<mazeWidth-1)
+			{	
+				int newX = Player2->getMapCoordinates().x+1;
+				int newY = Player2->getMapCoordinates().y;
+
+				int mapCoordinate = map[newX][newY];
+
+				//check if next tile is valid
+				if(mapCoordinate!=1&&mapCoordinate!=4&&mapCoordinate!=6)
+				{
+					//set the player so they move to the next tile
+					Player2->setMoving(true);
+					Player2->setMapCoordinates(sf::Vector2i(newX,newY));
+					Player2->setGoalPosition(sf::Vector2f(newX*(70*scale), newY*(70*scale)));
+				}
+			}
+		}
+	}//end of if right
+
+	//Vertical Controls
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W))||(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)))
+	{
+		if (Player1->getDirection()==vertical&&!Player1->getMoving())//the player is not currently moving and the direction is correct
+		{
+			if(Player1->getMapCoordinates().y-1>0)
+			{	
+				int newX = Player1->getMapCoordinates().x;
+				int newY = Player1->getMapCoordinates().y-1;
+
+				int mapCoordinate = map[newX][newY];
+
+				//check if next tile is valid
+				if(mapCoordinate!=1&&mapCoordinate!=4&&mapCoordinate!=6)
+				{
+					//set the player so they move to the next tile
+					Player1->setMoving(true);
+					Player1->setMapCoordinates(sf::Vector2i(newX,newY));
+					Player1->setGoalPosition(sf::Vector2f(newX*(70*scale), newY*(70*scale)));
+				}
+			}
+		}
+
+		if (Player2->getDirection()==vertical&&!Player2->getMoving())//the player is not currently moving and the direction is correct
+		{
+			if(Player2->getMapCoordinates().y-1>0)
+			{	
+				int newX = Player2->getMapCoordinates().x;
+				int newY = Player2->getMapCoordinates().y-1;
+
+				int mapCoordinate = map[newX][newY];
+
+				//check if next tile is valid
+				if(mapCoordinate!=1&&mapCoordinate!=4&&mapCoordinate!=6)
+				{
+					//set the player so they move to the next tile
+					Player2->setMoving(true);
+					Player2->setMapCoordinates(sf::Vector2i(newX,newY));
+					Player2->setGoalPosition(sf::Vector2f(newX*(70*scale), newY*(70*scale)));
+				}
+			}
+		}
+	}//end of if Left
+
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S))||(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)))
+	{
+		if (Player1->getDirection()==vertical&&!Player1->getMoving())//the player is not currently moving and the direction is correct
+		{
+			if(Player1->getMapCoordinates().y+1<mazeHeight-1)
+			{	
+				int newX = Player1->getMapCoordinates().x;
+				int newY = Player1->getMapCoordinates().y+1;
+
+				int mapCoordinate = map[newX][newY];
+
+				//check if next tile is valid
+				if(mapCoordinate!=1&&mapCoordinate!=4&&mapCoordinate!=6)
+				{
+					//set the player so they move to the next tile
+					Player1->setMoving(true);
+					Player1->setMapCoordinates(sf::Vector2i(newX,newY));
+					Player1->setGoalPosition(sf::Vector2f(newX*(70*scale), newY*(70*scale)));
+				}
+			}
+		}
+
+		if (Player2->getDirection()==vertical&&!Player2->getMoving())//the player is not currently moving and the direction is correct
+		{
+			if(Player2->getMapCoordinates().y+1<mazeHeight-1)
+			{	
+				int newX = Player2->getMapCoordinates().x;
+				int newY = Player2->getMapCoordinates().y+1;
+
+				int mapCoordinate = map[newX][newY];
+
+				//check if next tile is valid
+				if(mapCoordinate!=1&&mapCoordinate!=4&&mapCoordinate!=6)
+				{
+					//set the player so they move to the next tile
+					Player2->setMoving(true);
+					Player2->setMapCoordinates(sf::Vector2i(newX,newY));
+					Player2->setGoalPosition(sf::Vector2f(newX*(70*scale), newY*(70*scale)));
+				}
+			}
+		}
+	}//end of if right
+
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Space))||(sf::Keyboard::isKeyPressed(sf::Keyboard::E)))
+	{
+		Player1->invertDirection();
+		Player2->invertDirection();
+	}
 }
 
 void Scene::mazeDevision(int tileX,int tileY)
@@ -436,6 +579,9 @@ void Scene::mazeDevision(int tileX,int tileY)
 	const int liquid = 1;
 	const int player1Start = 2;
 	const int player2start = 3;
+	const int lock = 4;
+	const int key = 5;
+	const int enemy = 6;
 
 	float CaptureX = 0.0f;
 	float CaptureY = 0.0f;
@@ -451,16 +597,7 @@ void Scene::mazeDevision(int tileX,int tileY)
 			else{
 				map[x][y] = walkable;
 			}
-			//-------------Starting Tile Spawn---------------
-			if (CaptureX == offset && CaptureY == offset){
-
-				map[1][1] = player1Start;
-			}
-			//-------------Ending Tile Spawn---------------
-			if (y == tileY - 1 && x == tileX - 1){
-
-				map[x - 1][y - 1] = player2start;
-			}
+			
 			CaptureY += offset;
 			if (CaptureY >= offset * tileY){ CaptureY = 0; }
 		}
@@ -514,4 +651,25 @@ void Scene::mazeDevision(int tileX,int tileY)
 	//-------------Ending Tile Spawn---------------
 	map[tileX-2][tileY - 2] = player2start;
 
+}
+
+void Scene::GenerateTiles()
+{
+	int brickMainRan = rand()%10;
+
+	switch (brickMainRan)
+	{
+	case 0: brickMainID = brickWall; break;
+	case 1: brickMainID = grassWall; break;
+	case 2: brickMainID = dirtWall; break;
+	case 3: brickMainID = sandWall; break;
+	case 4: brickMainID = castleWall; break;
+	case 5: brickMainID = mudWall; break;
+	case 6: brickMainID = snowWall; break;
+	case 7: brickMainID = stoneWall; break;
+	case 8: brickMainID = liquidLava; break;
+	case 9: brickMainID = liquidWater; break;
+
+	default:brickMainID = brickWall; break;		
+	}
 }

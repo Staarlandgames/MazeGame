@@ -165,6 +165,7 @@
     <ClCompile Include="tile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="key.h" />
     <ClInclude Include="lock.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="player.h" />

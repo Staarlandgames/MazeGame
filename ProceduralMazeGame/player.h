@@ -29,14 +29,20 @@ public://public functions
 	//set wether the player should be mooving
 	inline void setMoving(bool input){isMoving = true;}
 	//set the goal position, and set the previous position
-	inline void setGoalPosiiton(sf::Vector2f input) {goalPosition = input;previousPosition = getPosition();}
+	inline void setGoalPosition(sf::Vector2f input) {goalPosition = input;previousPosition = getPosition();}
+	//check wether the player is moving
+	inline bool getMoving(){return isMoving;}
+
+	inline void setMapCoordinates(sf::Vector2i input){mapCoordinates = input;}
+	inline sf::Vector2i getMapCoordinates(){return mapCoordinates;}
+
+	inline void setStartPosiiton(sf::Vector2f input){startPosition = input;}
+	inline sf::Vector2f getStartPosiiton(){return startPosition;}
 	
 	//function that inverts the direction of the player object
 	void invertDirection();
 	//snap posiiton of the player so it is the same as the tile it is colliding with
 	void snapPosition(sf::Vector2f input);
-	//set goal function sets the goal for the current move position
-	void setGoal(object nextTile);
 	//update game object
 	void update(float deltaTime);
 
@@ -54,6 +60,8 @@ private://private variables
 	float velocity;//players movement velocity
 	bool isMoving;
 	direction currentDirection; // the current direction of the player
+	sf::Vector2i mapCoordinates;
+	sf::Vector2f startPosition;
 	sf::Vector2f previousPosition; // the stored previous position of the player
 	sf::Vector2f goalPosition; // the stored goal position of the player
 };

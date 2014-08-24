@@ -6,7 +6,9 @@ player::player(int id,sf::Texture &newTexture, sf::Vector2f newPosition, directi
 	currentDirection(dir),
 	isMoving(false),
 	previousPosition(newPosition),
-	goalPosition(newPosition)	
+	goalPosition(newPosition),
+	mapCoordinates(0,0),
+	velocity(100)
 {
 	sf::IntRect newRect(UVPosition,dimensions);
 	setTextureRect(newRect);
@@ -37,7 +39,10 @@ void player::update(float deltaTime)
 		isMoving =move(goalPosition,deltaTime);
 	}
 	else
+	{
 		snapPosition(goalPosition);
+		isMoving = false;
+	}
 }
 
 bool player::move(sf::Vector2f newPosition, float deltaTime)
@@ -45,30 +50,45 @@ bool player::move(sf::Vector2f newPosition, float deltaTime)
 
 	sf::Vector2f currentPos = getPosition();
 
-	if (currentDirection = horizontal) // move in X axis
+	float displacement; 
+	displacement = velocity*deltaTime;
+	bool finishedMoving = false;
+
+	if (currentDirection == horizontal) // move in X axis
 	{
 		if(currentPos.x>newPosition.x)
-			currentPos.x-= velocity*deltaTime;
+			if(currentPos.x-displacement<newPosition.x)
+				finishedMoving = true;
+			else
+				currentPos.x-=displacement;
 		else
-			currentPos.x+= velocity*deltaTime;
+			if(currentPos.x+displacement>newPosition.x)
+				finishedMoving = true;
+			else
+				currentPos.x+=displacement;
+
 	}
-	if ( currentDirection = vertical)
+	if ( currentDirection == vertical)
 	{
 		if(currentPos.y>newPosition.y)
-			currentPos.y-= velocity*deltaTime;
+			if(currentPos.y-displacement<newPosition.y)
+				finishedMoving = true;
+			else
+				currentPos.y-=displacement;
 		else
-			currentPos.y+= velocity*deltaTime;
+			if(currentPos.y+displacement>newPosition.y)
+				finishedMoving = true;
+			else
+				currentPos.y+=displacement;
 	}
 
 	//set the current position
-	setPosition(currentPos);
-	bool finishedMoving = (currentPos.x>newPosition.x&&currentPos.x>previousPosition.x)||(currentPos.x<newPosition.x&&currentPos.x<previousPosition.x)||(currentPos.y>newPosition.y&&currentPos.y>previousPosition.y)||(currentPos.y<newPosition.y&&currentPos.y<previousPosition.y);
-	
+
 	if (finishedMoving)
 	{
 		return false;
-	}
-
+	}	
+	setPosition(currentPos);
 	return true;
 }
 
