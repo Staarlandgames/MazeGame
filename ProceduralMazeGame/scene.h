@@ -9,7 +9,8 @@
 //parent classes in case they are needed
 
 //player, powers, and races
-
+#include "player.h"
+#include "tile.h"
 
 //Declerations
 enum State{Title,Play,Instructions,Paused,End}; //The game states
@@ -18,6 +19,10 @@ static const char * EnumStrings[] = { "Title","Play","Instructions","Paused","En
 const int MaxScreenWidth = 1024;
 const int MaxScreenHeight = 576;
 
+const int mazeWidth = 30;
+const int mazeHeight = 15;
+
+const float scale = 0.5;
 class Scene
 {
 //public functions
@@ -35,7 +40,7 @@ private:
 	void loadAssets(); // load the font file, and texture files
 	void drawHUD(); //draw labels to the screen
 	void windowEvents();//function to handle window events
-	void update();//the game update function TODO: Split this up into seperate functions
+	void update();//the game update function
 	void render();//render in game objects 
 	void resetScene();//reset all things in the scene
 	
@@ -44,7 +49,9 @@ private:
 	
 	//Gameplay Functions
 	void mouseInput(sf::Vector2i mousePosition);//check if the mouse button has hit any active objects
+	void keyboardInput() ;
 
+	void mazeDevision(int tileX,int tileY);
 //private variables
 private:
 
@@ -54,15 +61,29 @@ private:
 	sf::Font font;
 	//file IO objects
 	std::vector<std::string*> vectorStrings;
+	
+	//objects
+	//Map
+	int map[mazeWidth][mazeHeight];
+	//players
+	player* Player1;
+	player* Player2;
+	
+	//tiles
+	std::vector<tile*> blocks;
+	std::vector<tile*> liquidBlocks;
+	std::vector<tile*> foliageBlocks;
 	// Textures
-	sf::Vector2<sf::Texture> textures;
+	std::vector<sf::Texture*> textures;
 	
 	//id's for textures
 	int brickWall;
 	int grassWall;
-	int magicWall;
-	int mudWall;
+	int dirtWall;
 	int sandWall;
+
+	int castleWall;
+	int mudWall;
 	int snowWall;
 	int stoneWall;
 
@@ -78,6 +99,10 @@ private:
 	int greenKey;
 	int redKey;
 	int yellowKey;
+
+	int greenPlayer;
+	int bluePlayer;
+	int pinkPlayer;
 
 };
 
