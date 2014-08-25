@@ -18,14 +18,19 @@ public://public functions
 	// deconstructor
 	enemy::~enemy();
 
+	inline void setOffset(float input){offset = input;}
+	inline float getOffset(){return offset;}
+
+	//update game object
+	
 	
 public://public variables
 
 private://private functions	
-
+	//bool move(sf::Vector2f newPosition, float deltaTime);
 	
 private://private variables
-
+	float offset;
 
 };
 

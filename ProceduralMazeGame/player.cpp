@@ -38,11 +38,7 @@ void player::update(float deltaTime)
 	{
 		isMoving =move(goalPosition,deltaTime);
 	}
-	else
-	{
-		snapPosition(goalPosition);
-		isMoving = false;
-	}
+
 }
 
 bool player::move(sf::Vector2f newPosition, float deltaTime)
@@ -86,6 +82,7 @@ bool player::move(sf::Vector2f newPosition, float deltaTime)
 
 	if (finishedMoving)
 	{
+		snapPosition(goalPosition);
 		return false;
 	}	
 	setPosition(currentPos);

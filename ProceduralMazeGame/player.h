@@ -26,6 +26,8 @@ public://public functions
 	inline direction getDirection(){return currentDirection;}
 	//function to set the veloicty of the player
 	inline void setVelocity(float input){velocity = input;}
+
+	inline float getVelocity(){return velocity;}
 	//set wether the player should be mooving
 	inline void setMoving(bool input){isMoving = true;}
 	//set the goal position, and set the previous position
