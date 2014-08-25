@@ -10,3 +10,14 @@ ProceduralMazeGame.sdf
 *.pdb
 *.exe
 *.ilk
+Debug/
+*.tlog
+*.idb
+*.obj
+*.tlog
+*.exe
+*.pdb
+*.log
+*.lastbuildstate
+ProceduralMazeGame/x64/Release/main.obj
+*.obj
