@@ -14,13 +14,16 @@ public://public functions
 	//set functions
 	inline void setColor(sf::Color newColor = sf::Color::White){defaultColor = newColor;}//set the color of the object
 	inline void setActive(bool input = true){isActive = input;}//set wether the object is active
-	
+	inline bool getActive(){return isActive;}
 	//get functions
 	inline int getIDNumber(){return idNumber;}//return the id number
 	
 	//Game Functions
 	//virtual bool onHit() = 0;//react to collision with object
 	virtual void update(float deltaTime);
+	
+
+
 
 public://public variables
 	

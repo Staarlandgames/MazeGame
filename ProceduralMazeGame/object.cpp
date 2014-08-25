@@ -5,7 +5,8 @@
 
 object::object(int id,sf::Texture &newTexture, sf::Vector2f newPosition):
 	Sprite(newTexture),
-	idNumber(id)
+	idNumber(id),
+	isActive(true)
 {
 	setPosition(newPosition);
 	
@@ -15,4 +16,6 @@ void object::update(float deltaTime)
 {
 
 }
+
+
 

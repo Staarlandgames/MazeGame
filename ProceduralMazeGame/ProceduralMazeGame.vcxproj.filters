@@ -30,6 +30,15 @@
     <ClCompile Include="tile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="key.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scene.h">
@@ -48,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="key.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

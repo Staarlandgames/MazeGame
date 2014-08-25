@@ -17,6 +17,8 @@ public://public functions
 	// deconstructor
 	lock::~lock();
 	//
+	inline void setMapCoordinates(sf::Vector2i input){mapCoordinates = input;}
+	inline sf::Vector2i getMapCoordinates(){return mapCoordinates;}
 
 public://public variables
 
@@ -24,7 +26,7 @@ private://private functions
 
 private://private variables
 
-	bool key; // if key is found
+	sf::Vector2i mapCoordinates;
 
 
 };

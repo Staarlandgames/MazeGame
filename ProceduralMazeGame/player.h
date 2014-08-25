@@ -44,14 +44,14 @@ public://public functions
 	//snap posiiton of the player so it is the same as the tile it is colliding with
 	void snapPosition(sf::Vector2f input);
 	//update game object
-	void update(float deltaTime);
+	virtual void update(float deltaTime);
 
 public://public variables
 
 private://private functions	
 	
 	//function to move the player, specifying the new position to set the player too 
-	bool move(sf::Vector2f newPosition, float deltaTime);
+	virtual bool move(sf::Vector2f newPosition, float deltaTime);
 	void animateWalk(float deltaTime);
 
 

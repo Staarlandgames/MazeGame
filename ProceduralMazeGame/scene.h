@@ -2,6 +2,7 @@
 #define _SCENE_H_
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -11,6 +12,9 @@
 //player, powers, and races
 #include "player.h"
 #include "tile.h"
+#include "key.h"
+#include "lock.h"
+#include "enemy.h"
 
 //Declerations
 enum State{Title,Play,Instructions,Paused,End}; //The game states
@@ -24,7 +28,7 @@ const int mazeHeight = 15;
 
 const int noEnemies = 5;
 
-const int noLocks = 2;
+const int noLocks = 4;
 
 const float scale = 0.5;
 class Scene
@@ -48,6 +52,8 @@ private:
 	void render();//render in game objects 
 	void resetScene();//reset all things in the scene
 
+	sf::Vector2i GenerateMapCoordinate();
+
 	void GenerateTiles();
 
 
@@ -57,8 +63,12 @@ private:
 	//Gameplay Functions
 	void mouseInput(sf::Vector2i mousePosition);//check if the mouse button has hit any active objects
 	void keyboardInput() ;
-
+	//generare maze
 	void mazeDevision(int tileX,int tileY);
+	//check if two objects are intersecting
+	bool intersection(object (& r1), object (& r2));
+
+
 //private variables
 private:
 
@@ -81,13 +91,16 @@ private:
 	//tiles
 	tile* backgroundTile;
 	std::vector<object*> blocks;
-	
+	std::vector<key*> keys;
+	std::vector<enemy*> enemies;
 	// Textures
 	std::vector<sf::Texture*> textures;
 
 	//numbers for textures
 	int brickMainID;
 	int backgroundID;
+	int lockID;
+	int keyID;
 
 	//id's for textures
 	int brickWall;
@@ -118,6 +131,23 @@ private:
 	int pinkPlayer;
 
 	int terrain1;
+
+	//sfx buffers
+	std::vector<sf::SoundBuffer*> buffers;
+	std::vector<sf::Sound*> sounds;
+
+	std::vector<sf::Music*> musicTracks;
+	//sfx audio ID Numbers
+
+	int collectSFX;
+	int hitSFX;
+	int invertSFX;
+	int winSFX;
+
+	//music audio ID number
+
+	int mainTrack;
+
 };
 
  
